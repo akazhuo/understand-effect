@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: #f8f8f8;
+    }
+
+    #name {
+      width: 100px;
+      height: 100px;
+      background-color: #eee;
+    }
+
+    #age {
+      width: 100px;
+      height: 100px;
+      background-color: #123;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="name"></div>
+  <div id="age"></div>
+  <script src="./reactive.js"></script>
+  <script src="./effect.js?t=2"></script>
+  <script>
+    // import reactive from './reactive.js'
+    // import { effect } from './effect.js'
+    // let activeEvent;
+    // // 创建响应数据
+    // const state = reactive({ name: 'test', age: 18 });
+    // // 注册副作用函数
+    // effect(() => {
+    //   document.getElementById('name').textContent = state.name;
+    //   document.getElementById('age').textContent = state.age;
+    // })
+    // setTimeout(() => {
+    //   state.name = 'test1';
+    //   state.age = 20;
+    // }, 1000);
+    // effect(() => {
+    //   console.log('外层 effect');
+    //   effect(() => {
+    //     console.log('内层 effect');
+    //   })
+    //   console.log('外层 effect 继续执行');
+    // })
+    const obj = reactive({
+      count: 1
+    })
+    effect(() => {
+      console.log(obj.count);
+    })
+    obj.count++;
+    obj.count++;
+    obj.count++;
+
+  </script>
+</body>
+
+</html>
