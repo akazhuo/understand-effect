@@ -27,8 +27,9 @@
 <body>
   <div id="name"></div>
   <div id="age"></div>
+  <script src="./effect.js"></script>
+  <script src="./queue.js"></script>
   <script src="./reactive.js"></script>
-  <script src="./effect.js?t=2"></script>
   <script>
     // import reactive from './reactive.js'
     // import { effect } from './effect.js'
@@ -40,6 +41,7 @@
     //   document.getElementById('name').textContent = state.name;
     //   document.getElementById('age').textContent = state.age;
     // })
+    // # 测试调度
     // setTimeout(() => {
     //   state.name = 'test1';
     //   state.age = 20;
@@ -51,15 +53,28 @@
     //   })
     //   console.log('外层 effect 继续执行');
     // })
-    const obj = reactive({
-      count: 1
-    })
+    // # 测试队列
+    // const obj = reactive({
+    //   count: 1
+    // })
+    // effect(() => {
+    //   console.log(obj.count);
+    // })
+    // obj.count++;
+    // obj.count++;
+    // obj.count++;
+    // # 测试依赖清理
+    const obj = {
+      text: '小明',
+      show: false
+    }
     effect(() => {
-      console.log(obj.count);
+      if (obj.show) {
+        console.log(obj.text);
+      }
     })
-    obj.count++;
-    obj.count++;
-    obj.count++;
+    obj.show = true
+    obj.text = '小红'
 
   </script>
 </body>

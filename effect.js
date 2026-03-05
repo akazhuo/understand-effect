@@ -15,3 +15,11 @@ function effect(fn) {
   effectFn.deps = []; // 存储该 effect 依赖的集合
   effectFn(); // 立即执行一次
 }
+
+// 清理依赖
+function cleanup(effectFn) {
+  // 遍历所有依赖集合
+  for (const dep of effectFn.deps) {
+    dep.delete(effectFn);
+  }
+}

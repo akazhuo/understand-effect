@@ -27,33 +27,44 @@ function reactive(target) {
 // 依赖收集
 const targetMap = new WeakMap();
 function track(target, key) {
-  // 先找到 target 对应依赖
+  if (!activeEvent) return; // 没有活跃 effect，直接返回
+  // 获取 target 对应的依赖 Map
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     targetMap.set(target, (depsMap = new Map()));
   }
-  // 对代理对象的属性进行依赖收集
+  // 获取 key 对应的依赖 Set
   let deps = depsMap.get(key);
   if (!deps) {
     deps = new Set();
+    depsMap.set(key, deps);
   }
+  // 将当前活跃的 effect 添加到依赖集合中
   // 防止重复注册
   if (!deps.has(activeEvent) && activeEvent) {
     deps.add(activeEvent);
   }
-  depsMap.set(key, deps);
+  // 将依赖集合添加到 effect 的 deps 中（用于 cleanup）
+  activeEvent.deps.push(deps);
   console.log(`Tracking ${String(key)} on`, target);
 }
 
 // 更新触发
 function trigger(target, key) {
-  // 找到 target 对应依赖 map
-  const depsMap = targetMap.get(target);
-  if (!depsMap) return;
-  // 找到对应属性依赖
-  const deps = depsMap.get(key);
-  if (!deps) return;
-  // 遍历依赖集合，执行所有 effect
-  const effectsToRun = new Set(deps); // 避免无限循环
-  effectsToRun.forEach((effect) => effect());
+  const depsMap = targetMap.get(target); // 找到 target 对应依赖 map
+  if (!depsMap) return; // 没有依赖，直接返回
+
+  const deps = depsMap.get(key); // 找到对应属性依赖
+  if (!deps) return; // 没有依赖该属性的 effect，直接返回
+  // 创建一个新的 Set 避免无限循环
+  const effectsToRun = new Set(deps);
+
+  deps.forEach((effect) => {
+    // 避免重复触发当前正在执行的 effect
+    if (effect !== activeEvent) {
+      effectsToRun.add(effect);
+    }
+  });
+
+  effectsToRun.forEach((effect) => scheduler(effect));
 }
